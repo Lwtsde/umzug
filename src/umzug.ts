@@ -135,7 +135,8 @@ export class Umzug<Ctx extends object = object> extends emittery<UmzugEvents<Ctx
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			loadModule = async () => require(filepath) as RunnableMigration<unknown>;
 		} else if (jsExt === '.js' || jsExt === '.mjs') {
-			loadModule = async () => import(filepath) as Promise<RunnableMigration<unknown>>;
+			const isWindows = process.platform === "win32";
+			loadModule = async () => import(`${isWindows ? "file://" : ""}${filepath}`) as Promise<RunnableMigration<unknown>>;
 		} else {
 			loadModule = async () => {
 				throw new MissingResolverError(filepath);
